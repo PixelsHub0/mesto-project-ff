@@ -1,11 +1,8 @@
+import { openImagePopup } from "../scripts";
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
-// @todo: DOM узлы
-const cardContainer = document.querySelector('.places__list');
-
-
 // @todo: Функция создания карточки
-const createCard = (card, deleteCardFunk) => {
+const createCard = (card, deleteCardFunk, LikeActFunk, openImagePopupFunk) => {
     //клонируем карточку
     const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
     //наполняем карточку содержимым
@@ -15,6 +12,9 @@ const createCard = (card, deleteCardFunk) => {
     imageCard.alt = card.alt;
         // Настройка заголовка
     cardElement.querySelector('.card__title').textContent = card.name;
+    //Настройка обработчика клика по кнопке лайка
+    const likeButton = cardElement.querySelector('.card__like-button');
+    likeButton.addEventListener('click', (evt) => LikeButtonAct(evt));
     //обработчик клика по кнопке удаления
     const deleteButton = cardElement.querySelector('.card__delete-button');
     deleteButton.addEventListener('click', () => deleteOneCard(cardElement));
@@ -22,25 +22,16 @@ const createCard = (card, deleteCardFunk) => {
 }
 
 
-
 // @todo: Функция удаления карточки
 const deleteOneCard = (cardToDelete) => {
     cardToDelete.remove(); 
 }
 
-//вставка карточки на страницу 
-const renderCard = (cardElement, cardContainer) => {
-    cardContainer.append(cardElement);
+//функция лайка карточки
+const LikeButtonAct = (evt) => {
+    if (evt.target.classList.contains('card__like-button')) {
+        evt.target.classList.toggle('card__like-button_is-active');
+    }
 }
-
-
-// @todo: Вывести карточки на страницу
-initialCards.forEach((card) => {
-    const createdCart = createCard(card, deleteOneCard);
-    renderCard(createdCart, cardContainer);
-});
-
-
-
-
-
+export { createCard, deleteOneCard, LikeButtonAct };
+    
