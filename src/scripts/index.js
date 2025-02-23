@@ -2,7 +2,7 @@
 import '../pages/index.css';
 import avatar from '../images/avatar.jpg';
 import { initialCards } from './cards.js';
-import { createCard, deleteOneCard, LikeButtonAct } from '../components/card.js';
+import { createCard, deleteOneCard, likeButtonAct } from '../components/card.js';
 import { openModal, closeModal } from '../components/modal.js';
 
 // @todo: DOM узлы
@@ -29,8 +29,6 @@ const formEditProfile = document.querySelector('.popup__form_edit');
 const nameInput = formEditProfile.elements.name;
 const jobInput = formEditProfile.elements.description;
 const popupButton = formEditProfile.querySelector('.popup__button');
-nameInput.value = profileTitle.textContent;
-jobInput.value = profileDescription.textContent;
 
 //константы , связанные с функцией добавления новой карточки 
 const popUpFormNewCard = document.querySelector('.popup__form_new-card');
@@ -44,7 +42,7 @@ const renderCard = (cardElement, cardContainer) => {
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach((card) => {
-    const createdCart = createCard(card, deleteOneCard, LikeButtonAct, openImagePopup);
+    const createdCart = createCard(card, { deleteOneCard, likeButtonAct, openImagePopup });
     renderCard(createdCart, cardContainer);
 });
 
@@ -84,28 +82,26 @@ const openImagePopup = (imageSrc, imageAlt, caption) => {
     openModal(popupTypeImage); 
 };
 
-// Добавляем обработчик клика на контейнер карточек
-cardContainer.addEventListener('click', (event) => {
-    // Проверяем, был ли клик на изображении карточки
-    if (event.target.classList.contains('card__image')) {
-        const imageSrc = event.target.src; // Получаем src картинки
-        const imageAlt = event.target.alt; // Получаем alt картинки
-        const caption = event.target.alt; // получаем alt карточки 
-        openImagePopup(imageSrc, imageAlt, caption); // Открываем модальное окно с картинкой
-    }
-});
+//вставка в инпуты данных пользователя, при открытии попапа редактирования профиля
+const editProfileInputValue = () => {
+    nameInput.value = profileTitle.textContent;
+    jobInput.value = profileDescription.textContent;
+}
+
+//обработчик события при клике на кнопку редактирования профиля
+profileEditButton.addEventListener('click', editProfileInputValue);
 
 //функция редактирования профиля 
-const handleFormSubmit = (evt) => {
+const handleProfileFormSubmit = (evt) => {
     evt.preventDefault();
     const nameInputValue = nameInput.value;
-    const jobInputValue = jobInput.value;
+    const jobInputValue = jobInput.value
     profileTitle.textContent = nameInputValue;
     profileDescription.textContent = jobInputValue;
     closeModal(popupTypeEdit);
 }
 //обработчик клика на кнопку сохранения изменений профиля 
-formEditProfile.addEventListener('submit', handleFormSubmit); 
+formEditProfile.addEventListener('submit', handleProfileFormSubmit); 
 
 //функция добавление карточки на страницу с помощью модального онка 
 const addNewCard = (evt) => {
@@ -117,7 +113,7 @@ const addNewCard = (evt) => {
         link: cardLink,
         alt: cardName
     };
-    const newCard = createCard(newCardObj, deleteOneCard, LikeButtonAct, openImagePopup);
+    const newCard = createCard(newCardObj, deleteOneCard, likeButtonAct, openImagePopup);
     cardContainer.prepend(newCard);
     closeModal(popupTypeNewCard);
     popUpFormNewCard.reset();
