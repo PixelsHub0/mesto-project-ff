@@ -7,11 +7,45 @@
   line-height: 18px;
   box-sizing: border-box;
   padding: 10px 0 0;
-  margin-bottom: 10px;
+  margin-bottom: 26px;
+  outline: none;
 }
 
 .popup__input:last-of-type {
   margin-bottom: 0;
+}
+
+.popup__input_type_error {
+  border-bottom: 1px solid #FF0000;
+}
+
+.popup__error_visible {
+  font-weight: 400;
+  font-size: 12px;
+  color: #f00;
+}
+
+.popup__input-error {
+  position: absolute;
+}
+.name-input-error {
+  top: 140px;
+  left: 34px;
+}
+
+.description-input-error {
+  top: 213px;
+  left: 34px;
+}
+
+.place-name-input-error {
+  top: 140px;
+  left: 34px;
+}
+
+.link-input-error {
+  top: 213px;
+  left: 34px;
 }
 
 @media screen and (max-width: 568px) {
