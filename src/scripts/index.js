@@ -1,19 +1,14 @@
 // Импорты модулей
 import '../pages/index.css';
-import avatar from '../images/avatar.jpg';
-import { initialCards } from './cards.js';
 import { createCard, deleteOneCard, likeButtonAct } from '../components/card.js';
 import { openModal, closeModal } from '../components/modal.js';
-import { enableValidation, formValidationConfig, clearValidation } from '../components/validation.js';
+import { enableValidation, clearValidation } from '../components/validation.js';
 import {
     additionNewCardApi,
     editProfileApi,
-    getCardsApi,
-    getMyInformation,
     promises,
     changeAvatarApi
 } from '../components/api.js';
-
 // @todo: DOM узлы
 const cardContainer = document.querySelector('.places__list');
 // Константы, связанные с модальными окнами
@@ -50,6 +45,16 @@ const editLogoButton = document.querySelector('.edit-logo_button');
 const inputTypeUrl = popupFormAvatarEdit.querySelector('.popup__input_type_url');
 const profileImage = document.querySelector('.profile__image');
 
+//конфиг для валидации
+ const formValidationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+ };
+
 //работа с api
     //получение информации о пльзователе с сервера,и вывод карточки на страницу
 Promise.all(promises)
@@ -60,6 +65,9 @@ Promise.all(promises)
         profileDescription.textContent = userData.about;
         insertCards(cards, userId);
     })
+    .catch((err) => {
+        console.log(err)
+    })
 // Вставка карточки на страницу 
 const renderCard = (cardElement, cardContainer) => {
     cardContainer.append(cardElement);
@@ -68,7 +76,11 @@ const renderCard = (cardElement, cardContainer) => {
 // @todo: Вывести карточки на страницу
 const insertCards = (cards, userId) => { 
     cards.forEach((card) => {
-        const createdCart = createCard(card, { deleteOneCard, likeButtonAct, openImagePopup}, userId);
+        const createdCart = createCard(card, {
+            deleteCardFunk: deleteOneCard, 
+            LikeActFunk: likeButtonAct, 
+            openImagePopupFunk: openImagePopup
+        }, userId);
         renderCard(createdCart, cardContainer);
     }) 
 };
@@ -145,14 +157,16 @@ const renderLoading = (isLoading, formElement) => {
 const editAvatarSubmit = (evt) => {
     evt.preventDefault();
     renderLoading(true, popupFormAvatarEdit);
-    const inputTypeUrlValue = inputTypeUrl.value;
-    changeAvatarApi(inputTypeUrlValue)
+    changeAvatarApi(inputTypeUrl.value)
         .then((data) => {
             profileImage.style = `background-image: url('${data.avatar}')`
+            closeModal(popupAvatarEdit);
+        })
+        .catch((err) => {
+            console.log(err)
         })
         .finally(() => {
             renderLoading(false, popupFormAvatarEdit);
-            closeModal(popupAvatarEdit);
         })
 }
 
@@ -163,16 +177,17 @@ popupFormAvatarEdit.addEventListener('submit', editAvatarSubmit)
 const handleProfileFormSubmit = (evt) => {
     evt.preventDefault();
     renderLoading(true, formEditProfile);
-    const nameInputValue = nameInput.value;
-    const jobInputValue = jobInput.value
-    editProfileApi(nameInputValue, jobInputValue)
+    editProfileApi(nameInput.value, jobInput.value)
         .then((data) => {
             profileTitle.textContent = data.name;
             profileDescription.textContent = data.about;
+            closeModal(popupTypeEdit);
+        })
+        .catch((err) => {
+            console.log(err)
         })
         .finally(() => {
             renderLoading(false, formEditProfile);
-            closeModal(popupTypeEdit);
         })
 }
 
@@ -183,28 +198,28 @@ formEditProfile.addEventListener('submit', handleProfileFormSubmit);
 const addNewCard = (evt) => {
     evt.preventDefault();
     renderLoading(true, popUpFormNewCard);
-    const cardName = inputPlaceName.value;
-    const cardLink = inputLinkImage.value;
-    const newCardObj = {
-        name: cardName,
-        link: cardLink,
-    };
-    additionNewCardApi(newCardObj.name, newCardObj.link)
+    additionNewCardApi(inputPlaceName.value, inputLinkImage.value)
         .then((cardData) => {
-            const newCard = createCard(cardData, { deleteOneCard, likeButtonAct, openImagePopup }, cardData.owner._id);
+            const newCard = createCard(cardData, {
+                deleteCardFunk: deleteOneCard, 
+                LikeActFunk: likeButtonAct, 
+                openImagePopupFunk: openImagePopup
+            }, cardData.owner._id);
             cardContainer.prepend(newCard);
+            closeModal(popupTypeNewCard);
             popUpFormNewCard.reset();
             
         })
+        .catch((err) => {
+            console.log(err)
+        })
         .finally(() => {
             renderLoading(false, popUpFormNewCard);
-            closeModal(popupTypeNewCard);
     })
 }
 //обрабочик события submit, при добавления карточки на страницу 
 popUpFormNewCard.addEventListener('submit', (evt) => addNewCard(evt));
 
-export { openImagePopup };
     
 
 

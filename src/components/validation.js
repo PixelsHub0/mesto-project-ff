@@ -1,13 +1,9 @@
-//функция , показывающая ошибки при нарушении валидации
- const formValidationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
+const disableButton = (buttonElement, config) => {
+  buttonElement.disabled = true;
+  buttonElement.classList.add(config.inactiveButtonClass);
+}
 
+//функция , показывающая ошибки при нарушении валидации 
 const showInputError = (formElement, inputElement, errorMessage, config) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.add(config.inputErrorClass);
@@ -68,8 +64,7 @@ const hasInvalidInput = (inputList) => {
 //функция, которая отвечает за состояние кнопки 
 const toggleButtonState = (inputList, buttonElement, config) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(config.inactiveButtonClass);
+    disableButton(buttonElement, config)
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(config.inactiveButtonClass);
@@ -80,12 +75,8 @@ const clearValidation = (formElement, config) => {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
   inputList.forEach((inputElement) => {
-    const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-    inputElement.classList.remove(config.inputErrorClass);
-    errorElement.classList.remove(config.errorClass);
-    errorElement.textContent = '';
+    hideInputError(formElement, inputElement, config)
   });
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
+  disableButton(buttonElement, config)
 }
-export { enableValidation, formValidationConfig, clearValidation };
+export { enableValidation, clearValidation };

@@ -6,37 +6,33 @@ const apiConfig = {
   }
 }
 
+//функция проверки запроса от сервера
+const checkResponse = (res) => {
+    if (res.ok) {
+        return res.json();
+    } else {
+        return Promise.reject(`Ошибка ${res.status}`);
+    }
+}
+
 //функция получения информации пользователя от сервера
 const getMyInformation = () => {
   return fetch(`${apiConfig.baseUrl}/users/me`, {
     headers: apiConfig.headers
   })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
-
+    .then((responce) => {
+      return checkResponse(responce);
+    });
+};
 //функция получения массива карт с сервера
 const getCardsApi = () => {
   return fetch(`${apiConfig.baseUrl}/cards`, {
     headers: apiConfig.headers
   })
-  .then((data) => {
-      if (data.ok) {
-        return data.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+    .then((responce) => {
+      return checkResponse(responce);
+    });
+};
 
 const promises = [getMyInformation(), getCardsApi()] 
 
@@ -50,16 +46,10 @@ const editProfileApi = (name, description) => {
       about: `${description}`
     })
   })
-  .then((responce) => {
-    if (responce.ok) {
-      return responce.json();
-    }
-    return Promise.reject(`Ошибка: ${responce.status}`)
-  })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+    .then((responce) => {
+      return checkResponse(responce);
+    });
+};
 
 //функция, добавляющая новую карточку на сервер
 const additionNewCardApi = (name, link) => {
@@ -72,15 +62,9 @@ const additionNewCardApi = (name, link) => {
     })
   })
     .then((responce) => {
-      if (responce.ok) {
-        return responce.json();
-      }
-      return Promise.reject(`Ошибка: ${responce.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+      return checkResponse(responce);
+    });
+};
 
 //функция удаления карточки
 const deleteCardApi = (cardId) => {
@@ -89,15 +73,9 @@ const deleteCardApi = (cardId) => {
     headers: apiConfig.headers,
   })
     .then((responce) => {
-      if (responce.ok) {
-        return responce.json();
-      }
-      return Promise.reject(`Ошибка: ${responce.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+      return checkResponse(responce);
+    });
+};
 
 //функция постановки лайка на карточку
 const putLikeCard = (cardId) => {
@@ -106,15 +84,9 @@ const putLikeCard = (cardId) => {
     headers: apiConfig.headers
   })
     .then((responce) => {
-      if (responce.ok) {
-        return responce.json();
-      }
-      return Promise.reject(`Ошибка: ${responce.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+      return checkResponse(responce);
+    });
+};
 
 //функция снятия лайка с карточки
 const deleteLikeCard = (cardId) => {
@@ -122,16 +94,10 @@ const deleteLikeCard = (cardId) => {
     method: "DELETE",
     headers: apiConfig.headers
   })
-  .then((responce) => {
-      if (responce.ok) {
-        return responce.json();
-      }
-      return Promise.reject(`Ошибка: ${responce.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+    .then((responce) => {
+      return checkResponse(responce);
+    });
+};
 
 
 //функция изменения аватара
@@ -144,14 +110,8 @@ const changeAvatarApi = (newProfileAvatar) => {
     })
   })
     .then((responce) => {
-      if (responce.ok) {
-        return responce.json();
-      }
-      return Promise.reject(`Ошибка: ${responce.status}`)
-    })
-    .catch((err) => {
-    console.log(err)
-  })
-}
+      return checkResponse(responce);
+    });
+};
 
-export { getMyInformation, getCardsApi, editProfileApi, additionNewCardApi, promises, deleteCardApi, putLikeCard, deleteLikeCard, changeAvatarApi };
+export {editProfileApi, additionNewCardApi, promises, deleteCardApi, putLikeCard, deleteLikeCard, changeAvatarApi };
